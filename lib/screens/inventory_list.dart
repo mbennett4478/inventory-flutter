@@ -98,36 +98,68 @@ class InventoryListView extends StatelessWidget {
   Widget _addInventoryDialog(BuildContext context) {
     return Dialog(
       child: Container(
-        width: 300,
-        height: 300,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(15.0),
-              child: TextField(
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 0.5,
+        width: 200,
+        height: 200,
+        child: Padding(
+          padding: EdgeInsets.all(30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 15.0),
+                child: TextField(
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 0.5,
+                      ),
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2.0,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2.0,
+                      ),
                     ),
-                  ),
-                  hintText: 'Name your inventory...',
-                  hintStyle: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 0.5),
+                    hintText: 'Name your inventory...',
+                    hintStyle: TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 0.5),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  RaisedButton(
+                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+                    color: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      print("pressed");
+                    },
+                    child: Text(
+                      "Create"
+                    ),
+                  ),
+                  RaisedButton(
+                    color: Theme.of(context).colorScheme.error,
+                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+                    onPressed: () {
+                      print("pressed 1");
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(Icons.clear, size: 20),
+                        Text("Cancel"),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

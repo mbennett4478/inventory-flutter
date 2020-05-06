@@ -59,8 +59,9 @@ class MyApp extends StatelessWidget {
           onPrimary: Colors.white,
           onBackground: Colors.white,
           onSurface: Colors.white,
-          error: Color.fromRGBO(231, 111, 81, 1.0),
+          error: Color.fromRGBO(214, 40, 40, 1.0),
           onSecondary: Colors.white,
+
         ),
         primaryIconTheme: IconThemeData(color: Colors.white),
 //        primaryColor: Color.fromRGBO(38, 70, 83, 1.0),

@@ -25,25 +25,23 @@ class _InventoryListView extends State<InventoryListView>{
       }
     }
   ''';
-  FocusNode _focusNode;
+  final FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
+    focusNode.addListener(() => print('focusNode updated: hasFocus: ${focusNode.hasFocus}'));
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
-//  void _requestFocus() {
-//    setState(() {
-//      FocusScope.of(context).requestFocus(_focusNode);
-//    });
-//  }
+  void setFocus() {
+    FocusScope.of(context).requestFocus(focusNode);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +67,87 @@ class _InventoryListView extends State<InventoryListView>{
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(context: context, child: _addInventoryDialog(context, _focusNode));
+          showDialog(
+            context: context,
+            child: Dialog(
+              child: Container(
+                width: 200,
+                height: 200,
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 15.0),
+                        child: TextField(
+                          focusNode: focusNode,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                              focusColor: Theme.of(context).colorScheme.primary,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: 0.5,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2.0,
+                                ),
+                              ),
+//                              hintText: 'Name your inventory',
+//                              hintStyle: TextStyle(
+//                                color: Color.fromRGBO(255, 255, 255, 0.5),
+//                              ),
+                              labelText: 'Name your inventory',
+                              labelStyle: TextStyle(
+                                color: focusNode.hasFocus ? Colors.red : Theme.of(context).colorScheme.primary,
+                              ),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              print("pressed");
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(Icons.check, size: 17),
+                                Text(
+                                    "Create"
+                                ),
+                              ],
+                            ),
+                          ),
+                          RaisedButton(
+                            color: Theme.of(context).colorScheme.error,
+//                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+                            onPressed: () {
+                              print("pressed 1");
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(Icons.clear, size: 17),
+                                Text("Cancel"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -119,87 +197,8 @@ class _InventoryListView extends State<InventoryListView>{
         itemCount: inventoryList.length,
     );
   }
-
-  Widget _addInventoryDialog(BuildContext context, FocusNode focusNode) {
-//    FocusNode _focusNode = FocusNode();
-    return Dialog(
-      child: Container(
-        width: 200,
-        height: 200,
-        child: Padding(
-          padding: EdgeInsets.all(30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(bottom: 15.0),
-                child: TextField(
-                  focusNode: focusNode,
-                  onTap: () {
-                    focusNode.requestFocus();
-                    print(focusNode.hasFocus);
-                  },
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    focusColor: Theme.of(context).colorScheme.primary,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 0.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 2.0,
-                      ),
-                    ),
-                    labelText: 'Name your inventory',
-                    labelStyle: TextStyle(
-                      color: focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Color.fromRGBO(255, 255, 255, 0.5),
-                    )
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  RaisedButton(
-//                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
-                    color: Theme.of(context).colorScheme.primary,
-                    onPressed: () {
-                      print("pressed");
-                    },
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Icon(Icons.check, size: 17),
-                          Text(
-                            "Create"
-                          ),
-                        ],
-                    ),
-                  ),
-                  RaisedButton(
-                    color: Theme.of(context).colorScheme.error,
-//                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
-                    onPressed: () {
-                      print("pressed 1");
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(Icons.clear, size: 17),
-                        Text("Cancel"),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+//
+//  Widget _addInventoryDialog(BuildContext context) {
+//    return
+//  }
 }

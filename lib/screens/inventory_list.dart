@@ -2,7 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-class InventoryListView extends StatelessWidget {
+class InventoryListView extends StatefulWidget {
+  @override
+  _InventoryListView createState() => _InventoryListView();
+}
+
+class _InventoryListView extends State<InventoryListView>{
+
   final String query = ''' 
     query GetInventories {
       containers {
@@ -19,6 +25,25 @@ class InventoryListView extends StatelessWidget {
       }
     }
   ''';
+  FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+//  void _requestFocus() {
+//    setState(() {
+//      FocusScope.of(context).requestFocus(_focusNode);
+//    });
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +69,7 @@ class InventoryListView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(context: context, child: _addInventoryDialog(context));
+          showDialog(context: context, child: _addInventoryDialog(context, _focusNode));
         },
         child: Icon(Icons.add),
       ),
@@ -95,7 +120,8 @@ class InventoryListView extends StatelessWidget {
     );
   }
 
-  Widget _addInventoryDialog(BuildContext context) {
+  Widget _addInventoryDialog(BuildContext context, FocusNode focusNode) {
+//    FocusNode _focusNode = FocusNode();
     return Dialog(
       child: Container(
         width: 200,
@@ -108,8 +134,14 @@ class InventoryListView extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(bottom: 15.0),
                 child: TextField(
+                  focusNode: focusNode,
+                  onTap: () {
+                    focusNode.requestFocus();
+                    print(focusNode.hasFocus);
+                  },
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
+                    focusColor: Theme.of(context).colorScheme.primary,
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.white,
@@ -122,10 +154,10 @@ class InventoryListView extends StatelessWidget {
                         width: 2.0,
                       ),
                     ),
-                    hintText: 'Name your inventory...',
-                    hintStyle: TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 0.5),
-                    ),
+                    labelText: 'Name your inventory',
+                    labelStyle: TextStyle(
+                      color: focusNode.hasFocus ? Theme.of(context).colorScheme.primary : Color.fromRGBO(255, 255, 255, 0.5),
+                    )
                   ),
                 ),
               ),
@@ -133,25 +165,31 @@ class InventoryListView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   RaisedButton(
-                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+//                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
                     color: Theme.of(context).colorScheme.primary,
                     onPressed: () {
                       print("pressed");
                     },
-                    child: Text(
-                      "Create"
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(Icons.check, size: 17),
+                          Text(
+                            "Create"
+                          ),
+                        ],
                     ),
                   ),
                   RaisedButton(
                     color: Theme.of(context).colorScheme.error,
-                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+//                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
                     onPressed: () {
                       print("pressed 1");
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Icon(Icons.clear, size: 20),
+                        Icon(Icons.clear, size: 17),
                         Text("Cancel"),
                       ],
                     ),

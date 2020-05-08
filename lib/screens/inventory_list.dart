@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class InventoryListView extends StatefulWidget {
+  InventoryListView({Key key}) : super(key: key);
   @override
   _InventoryListView createState() => _InventoryListView();
 }
@@ -25,23 +26,6 @@ class _InventoryListView extends State<InventoryListView>{
       }
     }
   ''';
-  final FocusNode focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    focusNode.addListener(() => print('focusNode updated: hasFocus: ${focusNode.hasFocus}'));
-  }
-
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  void setFocus() {
-    FocusScope.of(context).requestFocus(focusNode);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,30 +65,25 @@ class _InventoryListView extends State<InventoryListView>{
                       Padding(
                         padding: EdgeInsets.only(bottom: 15.0),
                         child: TextField(
-                          focusNode: focusNode,
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                              focusColor: Theme.of(context).colorScheme.primary,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                  width: 0.5,
-                                ),
+                            fillColor: Theme.of(context).colorScheme.primary,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 0.5,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2.0,
-                                ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2.0,
                               ),
-//                              hintText: 'Name your inventory',
-//                              hintStyle: TextStyle(
-//                                color: Color.fromRGBO(255, 255, 255, 0.5),
-//                              ),
-                              labelText: 'Name your inventory',
-                              labelStyle: TextStyle(
-                                color: focusNode.hasFocus ? Colors.red : Theme.of(context).colorScheme.primary,
-                              ),
+                            ),
+                            labelText: 'Name your inventory',
+                            labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
                       ),
@@ -128,7 +107,6 @@ class _InventoryListView extends State<InventoryListView>{
                           ),
                           RaisedButton(
                             color: Theme.of(context).colorScheme.error,
-//                    padding: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
                             onPressed: () {
                               print("pressed 1");
                             },
@@ -197,8 +175,4 @@ class _InventoryListView extends State<InventoryListView>{
         itemCount: inventoryList.length,
     );
   }
-//
-//  Widget _addInventoryDialog(BuildContext context) {
-//    return
-//  }
 }

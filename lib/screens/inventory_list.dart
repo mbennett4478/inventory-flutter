@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:inventory/models/inventory.dart';
 import 'package:inventory/models/modal_type.dart';
+import 'package:inventory/providers/inventory.dart';
+import 'package:provider/provider.dart';
 
 class InventoryListView extends StatefulWidget {
   InventoryListView({Key key}) : super(key: key);
@@ -33,12 +35,9 @@ class _InventoryListView extends State<InventoryListView>{
   final inventories = List<Inventory>();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final test = Provider.of<GraphQLClient>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Inventories'),
@@ -56,9 +55,9 @@ class _InventoryListView extends State<InventoryListView>{
             return Center(child: Text('No Inventories'));
           }
 
-          inventories.addAll(result.data['containers'].map<Inventory>((i) => Inventory.fromJson(i)).toList());
-
-          return _inventoriesView(inventories);
+//          inventories.addAll(result.data['containers'].map<Inventory>((i) => Inventory.fromJson(i)).toList());
+//
+          return _inventoriesView(result.data['containers'].map<Inventory>((i) => Inventory.fromJson(i)).toList());
         },
       ),
       floatingActionButton: FloatingActionButton(

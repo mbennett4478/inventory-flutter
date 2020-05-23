@@ -2,8 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:inventory/screens/inventory_list.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider(
+          create: (_) => GraphQLClient(
+            link: HttpLink(
+              uri: 'http://bsmple.ngrok.io',
+            ),
+            cache: InMemoryCache(),
+          ),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -30,21 +47,9 @@ class MyApp extends StatelessWidget {
         ),
         iconTheme: IconThemeData(color: Colors.white),
         primaryTextTheme: TextTheme(
-          title: TextStyle(color: Colors.white),
+          headline6: TextStyle(color: Colors.white),
         ),
         dialogBackgroundColor: Color.fromRGBO(38, 70, 83, 1.0),
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-//        textTheme: TextTheme(
-//          te
-//        ),
         popupMenuTheme: PopupMenuThemeData(
             color: Color.fromRGBO(38, 70, 83, 1.0),
         ),
@@ -64,11 +69,6 @@ class MyApp extends StatelessWidget {
 
         ),
         primaryIconTheme: IconThemeData(color: Colors.white),
-//        primaryColor: Color.fromRGBO(38, 70, 83, 1.0),
-//          Color.fromRGBO(42, 157, 143, 1.0),
-//        accentColor: Color.fromRGBO(244, 162, 97, 1.0),
-//        backgroundColor: Color.fromRGBO(38, 70, 83, 1.0),
-//        brightness: ,
       ),
       home: GraphQLProvider(
         child: InventoryListView(),

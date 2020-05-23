@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:inventory/models/inventory.dart';
+import 'package:inventory/models/modal_type.dart';
 
 class InventoryListView extends StatefulWidget {
   InventoryListView({Key key}) : super(key: key);
@@ -9,7 +13,6 @@ class InventoryListView extends StatefulWidget {
 }
 
 class _InventoryListView extends State<InventoryListView>{
-
   final String query = ''' 
     query GetInventories {
       containers {
@@ -26,6 +29,13 @@ class _InventoryListView extends State<InventoryListView>{
       }
     }
   ''';
+
+  final inventories = List<Inventory>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,85 +56,16 @@ class _InventoryListView extends State<InventoryListView>{
             return Center(child: Text('No Inventories'));
           }
 
-          return _inventoriesView(result);
+          inventories.addAll(result.data['containers'].map<Inventory>((i) => Inventory.fromJson(i)).toList());
+
+          return _inventoriesView(inventories);
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
             context: context,
-            child: Dialog(
-              child: Container(
-                width: 200,
-                height: 200,
-                child: Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 15.0),
-                        child: TextField(
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            fillColor: Theme.of(context).colorScheme.primary,
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                                width: 0.5,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2.0,
-                              ),
-                            ),
-                            labelText: 'Name your inventory',
-                            labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          RaisedButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            onPressed: () {
-                              print("pressed");
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(Icons.check, size: 17),
-                                Text(
-                                    "Create"
-                                ),
-                              ],
-                            ),
-                          ),
-                          RaisedButton(
-                            color: Theme.of(context).colorScheme.error,
-                            onPressed: () {
-                              print("pressed 1");
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(Icons.clear, size: 17),
-                                Text("Cancel"),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            child: _addEditDialog(ModalType.create, Inventory(), context),
           );
         },
         child: Icon(Icons.add),
@@ -132,26 +73,26 @@ class _InventoryListView extends State<InventoryListView>{
     );
   }
 
-  ListView _inventoriesView(QueryResult result) {
-    final inventoryList = result.data['containers'];
+  ListView _inventoriesView(List<Inventory> inventoryList) {
+//    final inventoryList = result.data['containers'];
     return ListView.separated(
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(inventoryList[index]['name'], style: TextStyle(color: Colors.white)),
-            subtitle: Text('${inventoryList[index]['items'].length} items', style: TextStyle(color: Color.fromRGBO(155, 170, 176, 1.0))),
+            title: Text(inventoryList[index].name, style: TextStyle(color: Colors.white)),
+            subtitle: Text('${inventoryList[index].items.length} items', style: TextStyle(color: Color.fromRGBO(155, 170, 176, 1.0))),
             leading: Icon(
               Icons.folder, color: Color.fromRGBO(155, 170, 176, 1.0), size: 30, ),
             trailing: PopupMenuButton(
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  value: 1,
+                  value: ModalType.edit,
                   child: Text(
                     "Edit",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
                 PopupMenuItem(
-                  value: 2,
+                  value: ModalType.delete,
                   child: Text(
                     "Delete",
                     style: TextStyle(color: Colors.white),
@@ -159,7 +100,19 @@ class _InventoryListView extends State<InventoryListView>{
                 ),
               ],
               onSelected: (value) {
-                print(value);
+                switch (value) {
+                  case ModalType.edit:
+                    showDialog(
+                      context: context,
+                      child: _addEditDialog(ModalType.edit, inventoryList[index], context),
+                    );
+                    break;
+                  case ModalType.delete:
+                    setState(() {
+                      inventoryList.removeAt(index);
+                    });
+                    break;
+                }
               },
               icon: Icon(
                 Icons.more_vert,
@@ -175,4 +128,79 @@ class _InventoryListView extends State<InventoryListView>{
         itemCount: inventoryList.length,
     );
   }
+}
+
+Dialog _addEditDialog(ModalType type, Inventory inventory, BuildContext context) {
+  var borderSide = (Color color) => BorderSide(
+    color: color,
+    width: 0.5,
+  );
+
+  var textFieldController = TextEditingController(text: inventory.name ?? '');
+
+  return Dialog(
+    child: Container(
+      width: 200,
+      height: 200,
+      child: Padding(
+        padding: EdgeInsets.all(30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: 15),
+              child: TextField(
+                controller: textFieldController,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  fillColor: Theme.of(context).colorScheme.primary,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: borderSide(Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: borderSide(Theme.of(context).colorScheme.primary),
+                  ),
+                  labelText: 'Inventory name',
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                RaisedButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    print('pressed');
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Icon(Icons.add, size: 17),
+                      Text(type == ModalType.edit ? 'Edit': 'Create'),
+                    ],
+                  ),
+                ),
+                RaisedButton(
+                  color: Theme.of(context).colorScheme.error,
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Icon(Icons.clear, size: 17),
+                      Text('Cancel'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

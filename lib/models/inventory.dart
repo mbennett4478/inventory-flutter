@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:inventory/models/inventory_item.dart';
 
 class Inventory {

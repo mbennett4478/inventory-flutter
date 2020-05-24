@@ -13,7 +13,9 @@ void main() {
             link: HttpLink(
               uri: 'http://bsmple.ngrok.io',
             ),
-            cache: InMemoryCache(),
+            cache: OptimisticCache(
+              dataIdFromObject: typenameDataIdFromObject,
+            ),
           ),
         ),
       ],
@@ -33,7 +35,9 @@ class MyApp extends StatelessWidget {
     final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
       GraphQLClient(
         link: httpLink,
-        cache: InMemoryCache(),
+        cache: OptimisticCache(
+          dataIdFromObject: typenameDataIdFromObject,
+        ),
       ),
     );
 
@@ -71,7 +75,7 @@ class MyApp extends StatelessWidget {
         primaryIconTheme: IconThemeData(color: Colors.white),
       ),
       home: GraphQLProvider(
-        child: InventoryListView(),
+        child: InventoryView(),
         client: client,
       ),
     );

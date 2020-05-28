@@ -9,7 +9,7 @@ class AddEditDialogProvider extends ChangeNotifier {
   Inventory _inventory;
   TextEditingController _textEditingController;
 
-  AddEditDialogProvider(InventoryProvider inventoryProvider, ModalType type, [Inventory inventory, TextEditingController textEditingController]) {
+  AddEditDialogProvider(InventoryProvider inventoryProvider, ModalType type, [Inventory inventory]) {
     _textEditingController = TextEditingController(text: inventory != null ? inventory.name : '');
     _type = type;
     _inventory = inventory;

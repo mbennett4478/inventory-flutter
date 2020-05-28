@@ -42,12 +42,8 @@ class InventoryListView extends StatelessWidget {
                           context: context, 
                           builder: (context) {
                             return ChangeNotifierProvider(
-                              create: (_) => AddEditDialogProvider(inventoryProvider),
-                              child: AddEditDialog(
-                                type: ModalType.edit,
-                                inventory: inventoryProvider.inventories[index],
-                                textEditingController: TextEditingController(text: inventoryProvider.inventories[index].name),
-                              ),
+                              create: (_) => AddEditDialogProvider(inventoryProvider, ModalType.edit, inventoryProvider.inventories[index]),
+                              child: AddEditDialog(),
                             );
                           },
                         );

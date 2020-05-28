@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:inventory/models/inventory.dart';
 import 'package:inventory/models/modal_type.dart';
 import 'package:inventory/providers/add_edit_dialog_provider.dart';
 import 'package:inventory/providers/inventory.dart';

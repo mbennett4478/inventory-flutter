@@ -24,9 +24,8 @@ class Body extends StatelessWidget {
         title: Text('Items')
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          
-        },
+        // TODO: add logic for floating action button
+        onPressed: () {},
         child: Icon(Icons.add),
       ),
     );

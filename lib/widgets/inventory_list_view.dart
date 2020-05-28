@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:inventory/models/modal_type.dart';
+import 'package:inventory/providers/add_edit_dialog_provider.dart';
 import 'package:inventory/providers/inventory.dart';
 import 'package:inventory/widgets/add_edit_dialog.dart';
-import 'package:inventory/widgets/inventory_delete_snackbar.dart';
 import 'package:inventory/widgets/list_item_menu.dart';
-import 'package:inventory/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
 class InventoryListView extends StatelessWidget {
@@ -23,7 +22,7 @@ class InventoryListView extends StatelessWidget {
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(
-                  inventoryProvider.inventories[index].name, 
+                  inventoryProvider.inventories[index].name ?? '', 
                   style: TextStyle(color: Colors.white),
                 ),
                 subtitle: Text(
@@ -36,19 +35,25 @@ class InventoryListView extends StatelessWidget {
                   size: 30,
                 ),
                 trailing: ListItemMenu(
-                  selected: (value) {
+                  selected: (value) async {
                     switch (value) {
                       case ModalType.edit:
                         showDialog(
                           context: context, 
-                          child: AddEditDialog(
-                            type: ModalType.edit,
-                            inventory: inventoryProvider.inventories[index],
-                          ),
+                          builder: (context) {
+                            return ChangeNotifierProvider(
+                              create: (_) => AddEditDialogProvider(inventoryProvider),
+                              child: AddEditDialog(
+                                type: ModalType.edit,
+                                inventory: inventoryProvider.inventories[index],
+                                textEditingController: TextEditingController(text: inventoryProvider.inventories[index].name),
+                              ),
+                            );
+                          },
                         );
                         break;
                       case ModalType.delete:
-                        inventoryProvider.softDelete(index);
+                        await inventoryProvider.softDelete(index);
                         break;
                     }
                   }
@@ -73,7 +78,9 @@ class InventoryListView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   color: Theme.of(context).colorScheme.secondary,
-                  onPressed: () {},
+                  onPressed: () {
+                    inventoryProvider.undoDelete();
+                  },
                   icon: Icon(
                     Icons.undo,
                     color: Colors.white,

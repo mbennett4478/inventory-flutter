@@ -5,13 +5,15 @@ class RoundedButton extends StatelessWidget {
   final String text;
   final Function press;
   final Color color, textColor;
+  final bool loading;
 
   RoundedButton({
     Key key,
     this.text,
     this.press,
     this.color,
-    this.textColor
+    this.textColor,
+    this.loading = false,
   }) : super(key: key);
 
   @override
@@ -24,8 +26,12 @@ class RoundedButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         color: color ?? Theme.of(context).colorScheme.primary,
-        onPressed: press,
-        child: Text(
+        onPressed: loading ? null : press,
+        child: loading ? SizedBox(
+          child: CircularProgressIndicator(),
+          height: 20,
+          width: 20,
+        ) : Text(
           text,
           style: TextStyle(
             color: textColor ?? Colors.white,

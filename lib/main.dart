@@ -28,19 +28,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final HttpLink httpLink = HttpLink(
-      uri: 'http://bsmple.ngrok.io',
-    );
-
-    final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
-      GraphQLClient(
-        link: httpLink,
-        cache: OptimisticCache(
-          dataIdFromObject: typenameDataIdFromObject,
-        ),
-      ),
-    );
-
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -68,16 +55,13 @@ class MyApp extends StatelessWidget {
           onPrimary: Colors.white,
           onBackground: Colors.white,
           onSurface: Colors.white,
-          error: Color.fromRGBO(214, 40, 40, 1.0),
+          error: Color.fromRGBO(231, 111, 81, 1.0),
           onSecondary: Colors.white,
-
         ),
+        accentColor: Color.fromRGBO(247, 127, 0, 1.0),
         primaryIconTheme: IconThemeData(color: Colors.white),
       ),
-      home: GraphQLProvider(
-        child: InventoryView(),
-        client: client,
-      ),
+      home: InventoryView(),
     );
   }
 }

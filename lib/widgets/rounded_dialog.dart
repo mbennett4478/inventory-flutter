@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inventory/widgets/rounded_button.dart';
 
-class RoundedDialog extends StatefulWidget {
+class RoundedDialog extends StatelessWidget {
   final List<Widget> children;
   final String buttonText;
   final VoidCallback onButtonPress;
   final VoidCallback onClose;
+  final bool loading;
 
   RoundedDialog({
     Key key,
@@ -14,19 +15,8 @@ class RoundedDialog extends StatefulWidget {
     this.buttonText,
     this.onButtonPress,
     this.onClose,
+    this.loading,
   }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _RoundedDialog();
-}
-
-class _RoundedDialog extends State<RoundedDialog> {
-  bool loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,21 +50,13 @@ class _RoundedDialog extends State<RoundedDialog> {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: widget.children + <Widget>[
+                children: children + <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: RoundedButton(
-                      text: widget.buttonText,
+                      text: buttonText,
                       loading: loading,
-                      press: () {
-                        setState(() {
-                          loading = true;
-                        });
-                        widget.onButtonPress();
-                        setState(() {
-                          loading = false;
-                        });
-                      },
+                      press: onButtonPress,
                     ),
                   ),
                 ],
@@ -83,7 +65,7 @@ class _RoundedDialog extends State<RoundedDialog> {
             Positioned(
               right: 0,
               child: GestureDetector(
-                onTap: widget.onClose,
+                onTap: onClose,
                 child: Align(
                   child: CircleAvatar(
                     radius: 14,

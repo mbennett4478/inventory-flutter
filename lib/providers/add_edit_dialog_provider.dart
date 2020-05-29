@@ -8,6 +8,7 @@ class AddEditDialogProvider extends ChangeNotifier {
   ModalType _type = ModalType.create;
   Inventory _inventory;
   TextEditingController _textEditingController;
+  bool loading = false;
 
   AddEditDialogProvider(InventoryProvider inventoryProvider, ModalType type, [Inventory inventory]) {
     _textEditingController = TextEditingController(text: inventory != null ? inventory.name : '');
@@ -20,4 +21,19 @@ class AddEditDialogProvider extends ChangeNotifier {
   ModalType get type => _type;
   Inventory get inventory => _inventory;
   TextEditingController get textEditingController => _textEditingController;
+
+  Future<void> createOrEditInventory() async {
+    loading = true;
+    notifyListeners();
+    switch (_type) {
+      case ModalType.edit:
+        await _inventoryProvider.editInventory(_inventory.id, _textEditingController.text);
+        break;
+      default:
+        await _inventoryProvider.createInventory(_textEditingController.text);
+        break;
+    }
+    loading = false;
+    notifyListeners();
+  }
 }

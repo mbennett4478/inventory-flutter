@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:inventory/models/modal_type.dart';
 import 'package:inventory/providers/add_edit_dialog_provider.dart';
 import 'package:inventory/providers/inventory.dart';
+import 'package:inventory/screens/inventory_item_list.dart';
 import 'package:inventory/widgets/add_edit_dialog.dart';
+import 'package:inventory/widgets/list_item.dart';
 import 'package:inventory/widgets/list_item_menu.dart';
+import 'package:inventory/widgets/undo_button.dart';
 import 'package:provider/provider.dart';
 
 class InventoryListView extends StatelessWidget {
@@ -20,20 +23,10 @@ class InventoryListView extends StatelessWidget {
         children: <Widget>[
           ListView.separated(
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  inventoryProvider.inventories[index].name ?? '', 
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                  '${inventoryProvider.inventories[index].items.length} items',
-                  style: TextStyle(color: Color.fromRGBO(155, 170, 176, 1.0)),
-                ),
-                leading: Icon(
-                  Icons.folder, 
-                  color: Color.fromRGBO(155, 170, 176, 1.0),
-                  size: 30,
-                ),
+              return ListItem(
+                title: inventoryProvider.inventories[index].name ?? '',
+                subtitle: '${inventoryProvider.inventories[index].items.length} items',
+                itemIcon: Icons.folder,
                 trailing: ListItemMenu(
                   selected: (value) async {
                     switch (value) {
@@ -42,7 +35,11 @@ class InventoryListView extends StatelessWidget {
                           context: context, 
                           builder: (context) {
                             return ChangeNotifierProvider(
-                              create: (_) => AddEditDialogProvider(inventoryProvider, ModalType.edit, inventoryProvider.inventories[index]),
+                              create: (_) => AddEditDialogProvider(
+                                inventoryProvider, 
+                                ModalType.edit, 
+                                inventoryProvider.inventories[index]
+                              ),
                               child: AddEditDialog(),
                             );
                           },
@@ -54,42 +51,24 @@ class InventoryListView extends StatelessWidget {
                     }
                   }
                 ),
+                onItemPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InventoryItemListView(
+                        inventory: inventoryProvider.inventories[index]
+                      ),
+                    ),
+                  );
+                },
               );
             }, 
             separatorBuilder: (_, __) => Divider(), 
             itemCount: inventoryProvider.inventories.length,
           ),
-          Visibility(
+          UndoButton(
             visible: inventoryProvider.itemToBeDeleted != null,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: EdgeInsets.only(
-                  left: 60,
-                  right: 60,
-                  bottom: 20, 
-                ),
-                child: RaisedButton.icon(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  color: Theme.of(context).colorScheme.secondary,
-                  onPressed: () {
-                    inventoryProvider.undoDelete();
-                  },
-                  icon: Icon(
-                    Icons.undo,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    'Undo delete',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            onPress: () => inventoryProvider.undoDelete(),
           ),
         ]
       )

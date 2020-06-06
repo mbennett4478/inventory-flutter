@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:inventory/models/modal_type.dart';
-import 'package:inventory/widgets/list_item_menu.dart';
 
 class ListItem extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData itemIcon;
+  final Widget trailing;
+  final VoidCallback onItemPress;
 
   ListItem({
     Key key,
     this.title,
     this.subtitle,
     this.itemIcon,
+    this.trailing,
+    this.onItemPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onItemPress ?? null,
       title: Text(
         title,
         style: TextStyle(color: Colors.white),
@@ -30,18 +33,7 @@ class ListItem extends StatelessWidget {
         color: Color.fromRGBO(155, 170, 176, 1.0),
         size: 30,
       ),
-      trailing: ListItemMenu(
-        selected: (value) async {
-          switch (value) {
-            case ModalType.edit:
-              // TOOD: edit modal type logic
-              break;
-            case ModalType.delete:
-              // TOOD: delete modal type logic
-              break;
-          }
-        },
-      ),
+      trailing: trailing,
     );
   }
 }
